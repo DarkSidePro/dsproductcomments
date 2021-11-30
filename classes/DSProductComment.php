@@ -24,25 +24,34 @@
 *  International Registered Trademark & Property of PrestaShop SA
 */
 
-class ProductComment extends ObjectModel
+class DSProductComment extends ObjectModel
 {
     public $id;
     public $title;
     public $content;
-    public $image;
+    public $photo;
     public $stars;
     public $status;
-    public $productId;
+    public $id_product;
+    public $created_at;
+    public $customer_id;
+    public $id_lang;
+    public $show_name;
 
     public static $definition = array(
-        'table' => 'product_comment',
+        'table' => 'dsproductcomments',
+        'primary' => 'id',
         'fields' => array(
             'title' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
             'content' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
-            'image' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
+            'photo' => array('type' => self::TYPE_STRING, 'validate' => 'isString'),
             'stars' => array('type' => self::TYPE_INT, 'validate' => 'isunsignedInt'),
             'status' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool'),
-            'productId' => array('type' => self::TYPE_INT, 'validate' => 'isunsignedInt')
+            'id_product' => array('type' => self::TYPE_INT, 'validate' => 'isunsignedInt'),
+            'created_at' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
+            'customer_id' => array('type' => self::TYPE_INT, 'validate' => 'isunsignedInt'),
+            'id_lang' => array('type' => self::TYPE_INT, 'validate' => 'isunsignedInt'),
+            'show_name' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool')
         ) 
     );
 }

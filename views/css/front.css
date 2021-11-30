@@ -25,3 +25,143 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
+a#comments-link span.link-item {
+	display: flex !important;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+a#comments-link span.link-item svg {
+	margin-bottom: 1rem;
+}
+
+.d-flex {
+	display: flex;
+}
+
+.justify-content-center {
+	justify-content: center;
+}
+
+.d-none {
+	display: none;
+}
+
+.w-100 {
+	width: 100%;
+}
+
+.img-responvie {
+	width: 100%;
+	height: auto;
+}
+
+input[type="checkbox"] {
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.smileybox label {
+	position: relative;
+	width: 50px;
+	height: 50px;
+	display: inline-block;
+}
+
+.smileybox .check::before,
+.smileybox .rated::after {
+	content: "\2605";
+	font-size: 60px;
+	position: absolute;
+	color: #777;
+	left: 0;
+	bottom: 0;
+	line-height: 50px;
+}
+
+.smileybox .rated::after {
+	color: orange;
+}
+
+.smileybox .check:hover::before {
+	color: orange;
+}
+
+.smileybox label i {
+	position: absolute;
+
+	font-size: 35px;
+}
+
+.smileybox label i.em {
+	display: none;
+}
+
+@charset "UTF-8";
+.star-cb-group {
+  /* remove inline-block whitespace */
+  font-size: 0;
+  /* flip the order so we can use the + and ~ combinators */
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  /* the hidden clearer */
+}
+.star-cb-group * {
+  font-size: 1rem;
+}
+.star-cb-group > input {
+  display: none;
+}
+.star-cb-group > input + label {
+  /* only enough room for the star */
+  display: inline-block;
+  overflow: hidden;
+  text-indent: 9999px;
+  width: 1em;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.star-cb-group > input + label:before {
+  display: inline-block;
+  text-indent: -9999px;
+  content: "☆";
+  color: #888;
+}
+.star-cb-group > input:checked ~ label:before, .star-cb-group > input + label:hover ~ label:before, .star-cb-group > input + label:hover:before {
+  content: "★";
+  color: #e52;
+  text-shadow: 0 0 1px #333;
+}
+.star-cb-group > .star-cb-clear + label {
+  text-indent: -9999px;
+  width: .5em;
+  margin-left: -.5em;
+}
+.star-cb-group > .star-cb-clear + label:before {
+  width: .5em;
+}
+.star-cb-group:hover > input + label:before {
+  content: "☆";
+  color: #888;
+  text-shadow: none;
+}
+.star-cb-group:hover > input + label:hover ~ label:before, .star-cb-group:hover > input + label:hover:before {
+  content: "★";
+  color: #e52;
+  text-shadow: 0 0 1px #333;
+}
+
+#log {
+  margin: 1em auto;
+  width: 5em;
+  text-align: center;
+  background: transparent;
+}
+
+.rating--star {
+    color: #ee5522;
+    font-size: 2rem;
+}

@@ -25,3 +25,45 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            $('.--preview').removeClass('d-none');
+            $('.--preview img').attr('src', e.target.result);
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+$("#ratingUploadImage").change(function() {
+    readURL(this);
+});
+
+$('#productCommentForm').on('submit', function(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        enctype: 'multipart/form-data',
+        url: url,
+        data: new FormData(this),
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(data) {
+            myObj = JSON.parse(JSON.stringify(data));
+            
+            if (myObj.msg == 'Success') {
+                $('#productCommentForm').trigger('reset');
+                $('#productCommentForm').parent().removeClass('in');
+                $('#productCommentForm').parent().attr('aria-expanded', 'false');
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.status);
+            console.log(xhr.responseText);
+            console.log(thrownError);
+        }
+    });
+});

@@ -1,5 +1,4 @@
-<?php
-/**
+{*
 * 2007-2021 PrestaShop
 *
 * NOTICE OF LICENSE
@@ -22,25 +21,5 @@
 *  @copyright 2007-2021 PrestaShop SA
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
-*/
-$sql = array();
-
-$sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'dsproductcomments` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `created_at` DATETIME NOT NULL,
-    `title` VARCHAR(256) NOT NULL,
-    `content` VARCHAR(500) NOT NULL,
-    `stars` TINYINT NOT NULL,
-    `photo` LONGBLOB,
-    `id_lang` INT NOT NULL,
-    `id_product` INT NOT NULL,
-    `status` TINYINT NOT NULL,
-    `customer_id` INT NOT NULL,
-    PRIMARY KEY  (`id`)
-) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
-
-foreach ($sql as $query) {
-    if (Db::getInstance()->execute($query) == false) {
-        return false;
-    }
-}
+*}
+<a class='btn btn-primary' href='#productCommentForm' data-toggle='collapse' href='#collapseProductCommentsForm' role='button' aria-expanded='false' aria-control='collapseProductCommentsForm'>{l s='Add product review' mod='dsproductcomments'}</a>
