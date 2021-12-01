@@ -27,6 +27,8 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+require 'classes/DSProductComment.php';
+
 class Dsproductcomments extends Module
 {
     protected $config_form = false;
@@ -70,7 +72,8 @@ class Dsproductcomments extends Module
             $this->registerHook('displayCustomerAccount') &&
             $this->registerHook('ModuleRoutes') &&
             $this->registerHook('displayFooterProduct') && 
-            $this->registerHook('displayProductActions');
+            $this->registerHook('displayProductActions') && 
+            $this->registerHook('displayProductAdditionalInfo');
     }
 
     public function uninstall()
@@ -91,6 +94,20 @@ class Dsproductcomments extends Module
             $this->postProcess();
         }
 
+        if (Tools::isSubmit('showComment')) {
+            $comment_id = Tools::getValue('showComment');
+            $this->updateCommmentStatus($comment_id, 1);
+
+            Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules').'&configure=dsproductcomments');
+        }
+
+        if (Tools::isSubmit('hideComment')) {
+            $comment_id = Tools::getValue('hideComment');
+            $this->updateCommmentStatus($comment_id, 0);
+
+            Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules').'&configure=dsproductcomments');
+        }
+
         $newComments = $this->getNotReviewComments();
         $reviewdComments = $this->getReviewedComments();
 
@@ -104,6 +121,13 @@ class Dsproductcomments extends Module
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
 
         return $output.$this->renderForm();
+    }
+
+    protected function updateCommmentStatus(int $comment_id, int $status): void
+    {
+        $comment = new DSProductComment($comment_id);
+        $comment->status = $status;
+        $comment->update();
     }
 
     /**
@@ -308,10 +332,11 @@ class Dsproductcomments extends Module
 
     protected function getRevievCommentsForProductByLang(int $id_product, int $id_lang): array
     {
-        $sql = 'SELECT * 
-        FROM '._DB_PREFIX_.'dsproductcomments 
-        WHERE id_product = '.$id_product.' AND id_lang = '.$id_lang.' AND status  = 1
-        ORDER BY created_at DESC';
+        $sql = 'SELECT dsp.*, c.firstname, c.lastname
+        FROM '._DB_PREFIX_.'dsproductcomments dsp
+        LEFT JOIN '._DB_PREFIX_.'customer c ON c.id_customer = dsp.customer_id 
+        WHERE dsp.id_product = '.$id_product.' AND dsp.id_lang = '.$id_lang.' AND dsp.status  = 1
+        ORDER BY dsp.created_at DESC';
 
         return Db::getInstance()->executeS($sql);    
     }
@@ -323,7 +348,7 @@ class Dsproductcomments extends Module
             ->from('dsproductcomments')
             ->where('status = 1 AND id_product ='.$id_product); */
 
-        $sql = 'SELECT AVG(stars) 
+        $sql = 'SELECT AVG(stars) as avg, COUNT(id) as count
         FROM '._DB_PREFIX_.'dsproductcomments 
         WHERE status = 1 AND id_product = '.$id_product;
 
@@ -345,7 +370,7 @@ class Dsproductcomments extends Module
         return false;
     }
 
-    protected function canCustomerWriteComment($id_product, $id_customer): bool
+    protected function canCustomerWriteComment(int $id_product, int $id_customer): bool
     {
         $sql = new DbQuery();
         $sql->select('od.id_order_detail')
@@ -376,7 +401,11 @@ class Dsproductcomments extends Module
         $canCustomerWriteComment = $this->canCustomerWriteComment($id_product, $id_customer);
         $canGuestWriteComment = Configuration::get('DSPRODUCTCOMMENTS_ALLOW_GUESTS');
 
-        $isCreatedComment = $this->isUserAddComment($id_customer, $id_product);
+        if ($id_customer != 0) {
+            $isCreatedComment = $this->isUserAddComment($id_customer, $id_product);
+        } else {
+            $isCreatedComment = false;
+        }
 
         if ($isCreatedComment != true) {
             if (($canCustomerWriteComment == true) || ($canGuestWriteComment == true)) {
@@ -390,8 +419,6 @@ class Dsproductcomments extends Module
         $this->context->smarty->assign('logged', $logged);
         $this->context->smarty->assign('canWrite', $canWrite);
         $this->context->smarty->assign('id_lang', $id_lang);
-
-        
 
         return $this->context->smarty->fetch('module:dsproductcomments/views/templates/hook/displayFooterProduct.tpl');
     }
@@ -470,8 +497,40 @@ class Dsproductcomments extends Module
         return true;
     }
 
-    public function hookDisplayProductActions()
+    public function hookDisplayProductActions(array $params)
+    {          
+        
+    }
+
+    public function hookDisplayProductAdditionalInfo($params)
     {
-        return $this->context->smarty->fetch('module:dsproductcomments/views/templates/hook/displayProductActions.tpl');
+        $psVersion = _PS_VERSION_;
+        if (strpos($psVersion, '1.7')) {
+            $id_product = $params['product']['id_product'];
+            $id_customer = $this->context->cookie->id_customer;
+            $aveargeRating = $this->getAverageProductRating($id_product);
+    
+            $canWrite = false;
+            $canCustomerWriteComment = $this->canCustomerWriteComment($id_product, $id_customer);
+            $canGuestWriteComment = Configuration::get('DSPRODUCTCOMMENTS_ALLOW_GUESTS');
+    
+            if ($id_customer != 0) {
+                $isCreatedComment = $this->isUserAddComment($id_customer, $id_product);
+            } else {
+                $isCreatedComment = false;
+            }
+    
+            if ($isCreatedComment != true) {
+                if (($canCustomerWriteComment == true) || ($canGuestWriteComment == true)) {
+                    $canWrite = true;
+                }
+            }
+    
+            $this->context->smarty->assign('aveargeRating', $aveargeRating[0]);
+            $this->context->smarty->assign('isCreatedComment', $isCreatedComment);
+            $this->context->smarty->assign('canWrite', $canWrite);
+    
+            return $this->context->smarty->fetch('module:dsproductcomments/views/templates/hook/displayProductActions.tpl');
+        } 
     }
 }

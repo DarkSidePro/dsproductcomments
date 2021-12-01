@@ -18,12 +18,11 @@
 
 use Gumlet\ImageResize;
 
-require 'modules/dsproductcomments/classes/DSProductComment.php';
 class DsproductcommentsnewcommentModuleFrontController extends ModuleFrontController
 {
     public $ssl = true;
-    public $guestAllowed = false;
-    public $auth = true;
+    public $guestAllowed = true;
+    public $auth = false;
 
     public function initContent()
     {
@@ -37,12 +36,23 @@ class DsproductcommentsnewcommentModuleFrontController extends ModuleFrontContro
 
     public function displayAjaxNewrabatAction()
     {
+        if (Tools::getValue('ratingPot') != null) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['msg' => 'something gone wrong']);
+            die();
+        }
+
         if (Tools::isSubmit('ratingComment')) {
             $stars = (int) Tools::getValue('ratingStar');
             $title = Tools::getValue('ratingTitle');
             $content = Tools::getValue('ratingContent');
             $lang_id = (int) Tools::getValue('ratingLang');
             $id_product = (int)Tools::getValue('ratingComment');
+            $showName = 1;
+            
+            if (Tools::isSubmit('ratingShowName')) {
+                $showName = Tools::getValue('ratingShowName');
+            }
 
             $image = null;
 
@@ -52,7 +62,7 @@ class DsproductcommentsnewcommentModuleFrontController extends ModuleFrontContro
 
             $customer_id = (int) Context::getContext()->customer->id;
 
-            $id = $this->createComment($title, $stars, $image, $content, $customer_id, $lang_id, $id_product);
+            $id = $this->createComment($title, $stars, $image, $content, $customer_id, $lang_id, $id_product, $showName);
 
             header('Content-Type: application/json; charset=utf-8');
             if (is_int($id)) {
@@ -72,7 +82,8 @@ class DsproductcommentsnewcommentModuleFrontController extends ModuleFrontContro
         string $content, 
         int $customer_id, 
         int $lang_id, 
-        int $id_product
+        int $id_product,
+        int $showName
     ): int
     {
         $commentObject = new DSProductComment();
@@ -92,6 +103,7 @@ class DsproductcommentsnewcommentModuleFrontController extends ModuleFrontContro
         $commentObject->created_at = $stringDate;
         $commentObject->customer_id = $customer_id;
         $commentObject->id_lang = $lang_id;
+        $commentObject->show_name = $showName;
         $commentObject->add();
 
         return $commentObject->id;

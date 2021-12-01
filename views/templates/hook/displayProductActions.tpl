@@ -22,4 +22,13 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-<a class='btn btn-primary' href='#productCommentForm' data-toggle='collapse' href='#collapseProductCommentsForm' role='button' aria-expanded='false' aria-control='collapseProductCommentsForm'>{l s='Add product review' mod='dsproductcomments'}</a>
+{if $isCreatedComment == false && $canWrite == true} 
+    <a class='btn btn-primary btn-comment' data-toggle="modal" data-target="#writeCommentModal">{l s='Add product review' mod='dsproductcomments'}</a>
+{/if}
+{if $aveargeRating['avg'] > 0}
+    <div class='comments--rating mt-1' itemprop="aggregateRating" itemscope itemtype="https://schema.org/AggregateRating">
+        <span>{l s='Average rating:' mod='dsproductcomments'}</span> 
+        <span itemprop="ratingValue">{$aveargeRating['avg']|string_format:"%.2f"}</span>
+        <span>{l s='based on' mod='dsproductcomments'} {$aveargeRating['count']} {l s='customer reviews' mod='dsproductcomments'}</span>
+    </div>
+{/if}

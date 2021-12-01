@@ -36,6 +36,7 @@ $sql[] = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'dsproductcomments` (
     `id_product` INT NOT NULL,
     `status` TINYINT NOT NULL,
     `customer_id` INT NOT NULL,
+    `show_name` INT NOT NULL,
     PRIMARY KEY  (`id`)
 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;';
 
