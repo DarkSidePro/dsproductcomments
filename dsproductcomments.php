@@ -499,38 +499,35 @@ class Dsproductcomments extends Module
 
     public function hookDisplayProductActions(array $params)
     {          
-        
+        $id_product = $params['product']['id_product'];
+        $id_customer = $this->context->cookie->id_customer;
+        $aveargeRating = $this->getAverageProductRating($id_product);
+
+        $canWrite = false;
+        $canCustomerWriteComment = $this->canCustomerWriteComment($id_product, $id_customer);
+        $canGuestWriteComment = Configuration::get('DSPRODUCTCOMMENTS_ALLOW_GUESTS');
+
+        if ($id_customer != 0) {
+            $isCreatedComment = $this->isUserAddComment($id_customer, $id_product);
+        } else {
+            $isCreatedComment = false;
+        }
+
+        if ($isCreatedComment != true) {
+            if (($canCustomerWriteComment == true) || ($canGuestWriteComment == true)) {
+                $canWrite = true;
+            }
+        }
+
+        $this->context->smarty->assign('aveargeRating', $aveargeRating[0]);
+        $this->context->smarty->assign('isCreatedComment', $isCreatedComment);
+        $this->context->smarty->assign('canWrite', $canWrite);
+
+        return $this->context->smarty->fetch('module:dsproductcomments/views/templates/hook/displayProductActions.tpl');
     }
 
     public function hookDisplayProductAdditionalInfo($params)
     {
-        $psVersion = _PS_VERSION_;
-        if (strpos($psVersion, '1.7')) {
-            $id_product = $params['product']['id_product'];
-            $id_customer = $this->context->cookie->id_customer;
-            $aveargeRating = $this->getAverageProductRating($id_product);
-    
-            $canWrite = false;
-            $canCustomerWriteComment = $this->canCustomerWriteComment($id_product, $id_customer);
-            $canGuestWriteComment = Configuration::get('DSPRODUCTCOMMENTS_ALLOW_GUESTS');
-    
-            if ($id_customer != 0) {
-                $isCreatedComment = $this->isUserAddComment($id_customer, $id_product);
-            } else {
-                $isCreatedComment = false;
-            }
-    
-            if ($isCreatedComment != true) {
-                if (($canCustomerWriteComment == true) || ($canGuestWriteComment == true)) {
-                    $canWrite = true;
-                }
-            }
-    
-            $this->context->smarty->assign('aveargeRating', $aveargeRating[0]);
-            $this->context->smarty->assign('isCreatedComment', $isCreatedComment);
-            $this->context->smarty->assign('canWrite', $canWrite);
-    
-            return $this->context->smarty->fetch('module:dsproductcomments/views/templates/hook/displayProductActions.tpl');
-        } 
+        
     }
 }
