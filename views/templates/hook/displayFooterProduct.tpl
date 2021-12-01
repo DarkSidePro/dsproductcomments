@@ -33,7 +33,7 @@
       </div>
       <div class="modal-body">
         {if $isCreatedComment == false && $canWrite == true} 
-            <form class='form card card-body card-block mt-1' method="POST" id='productCommentForm'>
+            <form class='form card card-body card-block' method="POST" id='productCommentForm'>
                 <input type='text' name='ratingPot' class='d-none'>
                 <input type='hidden' name='ratingComment' value='{$product.id}'>
                 <input type='hidden' name='ratingLang' value='{$id_lang}'>
