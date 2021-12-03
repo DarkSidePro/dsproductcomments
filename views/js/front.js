@@ -58,7 +58,7 @@ $('#productCommentForm').on('submit', function(e) {
                 $('#productCommentForm').trigger('reset');
                 $('#productCommentForm').parent().removeClass('in');
                 $('#productCommentForm').parent().attr('aria-expanded', 'false');
-                $('#exampleModal').modal('hide');
+                $('#writeCommentModal').modal('hide');
             }
         },
         error: function(xhr, ajaxOptions, thrownError) {
