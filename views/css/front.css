@@ -195,3 +195,10 @@ input[type="checkbox"] {
 .quickview .btn-comment {
   display: none;
 }
+
+@media screen and (max-width: 600px) {
+  div#writeCommentModal {
+    width: min-content;
+    max-width: 100%;
+  }
+}
