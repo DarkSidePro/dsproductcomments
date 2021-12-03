@@ -256,14 +256,11 @@ class Dsproductcomments extends Module
     public function hookHeader()
     {
         $psVersion = (float) _PS_VERSION_;
+        $this->context->controller->addJS($this->_path.'views/js/front.js');
+        $this->context->controller->addCSS($this->_path.'views/css/front.css');
 
-        if ($psVersion <= 1.7) {
-            $this->context->controller->addJS($this->_path.'views/js/front.js');
-            $this->context->controller->addCSS($this->_path.'views/css/front.css');
-        } else {
-            $this->context->controller->registerStylesheet(1, $this->_path.'/views/css/front.css');
-            $this->context->controller->registerJavascript(1, $this->_path.'/views/js/front.js');
-        }
+        $this->context->controller->registerStylesheet(1, $this->_path.'/views/css/front.css');
+        $this->context->controller->registerJavascript(1, $this->_path.'/views/js/front.js');
     }
 
     public function hookDisplayCustomerAccount()
