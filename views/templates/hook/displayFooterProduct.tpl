@@ -43,7 +43,7 @@
                 </div>
                 <div class='form-group'>
                     {if $logged == true}
-                        <label>{l s='Show your real name if you logged in' mod='dsproductcomments'}</label>
+                        <label>{l s='Show your real name' mod='dsproductcomments'}</label>
                         <select class='form-control' name='ratingShowName'>
                             <option value='0'>{l s='Yes' mod='dsproductcomments'}</option>
                             <option value='1'>{l s='No' mod='dsproductcomments'}</option>
